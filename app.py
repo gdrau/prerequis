@@ -18,7 +18,7 @@ from __future__ import print_function
 from future.standard_library import install_aliases
 install_aliases()
 
-import urllib2
+
 import requests
 import base64
 import json
