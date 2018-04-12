@@ -51,9 +51,8 @@ project_id = 'B85DD89411E83A9413360080EF15F2B2'
 @app.route('/webhook', methods=['POST'])
 def webhook():
     req = request.get_json(silent=True, force=True)
-    console.log("coucou");
-    print("Request:")
-    print(json.dumps(req, indent=4))
+    res = processRequest(req)
+    res = json.dumps(res, indent=4)
     r = make_response(res)
     r.headers['Content-Type'] = 'application/json'
     return r
