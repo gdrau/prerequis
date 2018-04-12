@@ -44,7 +44,7 @@ api_login = 'administrator'
 api_password = ''
 api_iserver = '192.168.1.96'
 project_id = 'B85DD89411E83A9413360080EF15F2B2'
-
+base_url = "http://mon.prerequis.com:2051/MicroStrategyLibrary/api/";
 
 
 
@@ -99,9 +99,8 @@ def get_report(base_url, authToken, cookies, project_id):
 def processRequest(req):
     if req.get("result").get("action") != "congessalarie":
         return {}
-    base_url = "http://mon.prerequis.com:2051/MicroStrategyLibrary/api/";
     authToken, cookies = login(base_url,api_login,api_password)
-    datastore=get_report(base_url, authToken, cookies, project_id)
+    #datastore=get_report(base_url, authToken, cookies, project_id)
     res = makeWebhookResult(datastore)
     return res   
 
