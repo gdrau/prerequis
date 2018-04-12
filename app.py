@@ -57,11 +57,53 @@ def webhook():
     r.headers['Content-Type'] = 'application/json'
     return r
 
+#### Recuperation du token MicroStrategy ###
+def login(base_url,api_login,api_password):
+    #print("Obtention token...")
+    data_get = { "username": "administrator",
+                 "password": "",
+                 "loginMode": "1",
+                 "maxSearch": "3",
+                 "workingSet": 0,
+                 "changePassword": "false",
+                 "newPassword": "string",
+                 "metadataLocale": "en_us",
+                 "warehouseDataLocale": "en_us",
+                 "displayLocale": "en_us",
+                 "messagesLocale": "en_us",
+                 "numberLocale": "en_us",
+                 "timeZone": "UTC",
+                 "applicationType": "35" }
+    r = requests.post(base_url + 'auth/login', data=data_get)
+    if r.ok:
+        authToken = r.headers['X-MSTR-AuthToken']
+        cookies = dict(r.cookies)
+        #print("Token: " + authToken)
+        return authToken, cookies
+    else:
+        print("HTTP %i - %s, Message %s" % (r.status_code, r.reason, r.text))
+
+def get_report(base_url, authToken, cookies, project_id):
+    base_url2=base_url + "reports/074C4FD647680AD5526DDBB9DBFFFE90/instances?offset=0&limit=1000"
+    data_rp={}
+    header_rp = {'X-MSTR-AuthToken': authToken,
+                 'Accept': 'application/json',
+                 'Content-Type': 'application/json',
+                 'X-MSTR-ProjectID': project_id}
+    r = requests.post(base_url2 , headers=header_rp, data=data_rp, cookies=cookies)
+    datast = json.loads(r.content)
+    return datast
+    
+                    
+                    
 def processRequest(req):
     if req.get("result").get("action") != "congessalarie":
         return {}
-    res = makeWebhookResult()
-    return res    
+    base_url = "http://mon.prerequis.com:2051/MicroStrategyLibrary/api/";
+    authToken, cookies = login(base_url,api_login,api_password)
+    datastore=get_report(base_url, authToken, cookies, project_id)
+    res = makeWebhookResult(datastore)
+    return res   
 
 def makeWebhookResult():
     
