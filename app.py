@@ -89,10 +89,10 @@ def login(base_url,api_login,api_password):
 def get_report(base_url, authToken, cookies, project_id):
     base_url2=base_url + "reports/074C4FD647680AD5526DDBB9DBFFFE90/instances?offset=0&limit=1000"
     data_rp={}
-        header_rp = {'X-MSTR-AuthToken': authToken,
-                     'Accept': 'application/json',
-                     'Content-Type': 'application/json',
-                     'X-MSTR-ProjectID': project_id}
+    header_rp = {'X-MSTR-AuthToken': authToken,
+                 'Accept': 'application/json',
+                 'Content-Type': 'application/json',
+                 'X-MSTR-ProjectID': project_id}
     r = requests.post(base_url2 , headers=header_rp, data=data_rp, cookies=cookies)
     datast = json.loads(r.content)
     return datast
