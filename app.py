@@ -83,25 +83,14 @@ def login(base_url,api_login,api_password):
     else:
         print("HTTP %i - %s, Message %s" % (r.status_code, r.reason, r.text))
 
-def get_report(base_url, authToken, cookies, project_id):
-    base_url2=base_url + "reports/074C4FD647680AD5526DDBB9DBFFFE90/instances?offset=0&limit=1000"
-    data_rp={}
-    header_rp = {'X-MSTR-AuthToken': authToken,
-                 'Accept': 'application/json',
-                 'Content-Type': 'application/json',
-                 'X-MSTR-ProjectID': project_id}
-    r = requests.post(base_url2 , headers=header_rp, data=data_rp, cookies=cookies)
-    datast = json.loads(r.content)
-    return datast
-    
+
                     
                     
 def processRequest(req):
     if req.get("result").get("action") != "congessalarie":
         return {}
     authToken, cookies = login(base_url,api_login,api_password)
-    #datastore=get_report(base_url, authToken, cookies, project_id)
-    res = makeWebhookResult(datastore)
+    res=makeWebhookResult()
     return res   
 
 def makeWebhookResult():
