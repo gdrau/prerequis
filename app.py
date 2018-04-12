@@ -75,15 +75,9 @@ def login(base_url,api_login,api_password):
                  "timeZone": "UTC",
                  "applicationType": "35" }
     r = requests.post(base_url + 'auth/login', data=data_get)
-    if r.ok:
-        authToken = r.headers['X-MSTR-AuthToken']
-        cookies = dict(r.cookies)
-        #print("Token: " + authToken)
-        return authToken, cookies
-    else:
-        a="coucou"
-        b="tat"
-        return a,b
+    a="coucou"
+    b="tat"
+    return a,b
 
 
                     
