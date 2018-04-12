@@ -89,7 +89,7 @@ def login(base_url,api_login,api_password):
 def processRequest(req):
     if req.get("result").get("action") != "congessalarie":
         return {}
-    authToken, cookies = login(base_url,api_login,api_password)
+    #authToken, cookies = login(base_url,api_login,api_password)
     res=makeWebhookResult()
     return res   
 
