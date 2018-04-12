@@ -1,5 +1,5 @@
-# -*- coding:utf8 -*-
 # !/usr/bin/env python
+#-*- coding:utf8 -*-
 # Copyright 2017 Google Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import urllib2
 import requests
 import base64
@@ -52,9 +53,7 @@ def webhook():
 
     print("Request:")
     print(json.dumps(req, indent=4))
-
     res = processRequest(req)
-
     res = json.dumps(res, indent=4)
     # print(res)
     r = make_response(res)
@@ -104,9 +103,7 @@ def processRequest(req):
     if req.get("result").get("action") != "congessalarie":
         return {}
     base_url = "http://192.168.1.96:8080/MicroStrategyLibrary/api/";
-	
-    
-	authToken, cookies = login(base_url,api_login,api_password)
+    authToken, cookies = login(base_url,api_login,api_password)
     datastore=get_report(base_url, authToken, cookies, project_id)
     res = makeWebhookResult(datastore)
     return res
@@ -124,18 +121,18 @@ def makeYqlQuery(req):
 
 def makeWebhookResult(datastore):
     lo=len(datastore['result']['data']['root']['children'])		
-	for i in range(0,lo,1):
-		consultant=datastore['result']['data']['root']['children'][i]['element']['name']
-		lo2=len(datastore['result']['data']['root']['children'][i]['children'])
-		for j in range(0,lo2,1):
-			pole=datastore['result']['data']['root']['children'][i]['children'][j]['element']['name']
-			lo3=len(datastore['result']['data']['root']['children'][i]['children'][j]['children'])
-			for k in range(0,lo3,1):
-				date_debut=datastore['result']['data']['root']['children'][i]['children'][j]['children'][k]['element']['name']		
-				lo4=len(datastore['result']['data']['root']['children'][i]['children'][j]['children'][k]['children'])
-				for l in range(0,lo4,1):
-					date_fin=datastore['result']['data']['root']['children'][i]['children'][j]['children'][k]['children'][l]['element']['name']
-					print(consultant +" du pole " + pole + " est absent du " + date_debut + " a "+ date_fin)
+    for i in range(0,lo,1):
+	consultant=datastore['result']['data']['root']['children'][i]['element']['name']
+	lo2=len(datastore['result']['data']['root']['children'][i]['children'])
+	for j in range(0,lo2,1):
+		pole=datastore['result']['data']['root']['children'][i]['children'][j]['element']['name']
+		lo3=len(datastore['result']['data']['root']['children'][i]['children'][j]['children'])
+		for k in range(0,lo3,1):
+			date_debut=datastore['result']['data']['root']['children'][i]['children'][j]['children'][k]['element']['name']		
+			lo4=len(datastore['result']['data']['root']['children'][i]['children'][j]['children'][k]['children'])
+			for l in range(0,lo4,1):
+				date_fin=datastore['result']['data']['root']['children'][i]['children'][j]['children'][k]['children'][l]['element']['name']
+				print(consultant +" du pole " + pole + " est absent du " + date_debut + " a "+ date_fin)
 	if speech == '': 
 		speech = speech + consultant +" du pole " + pole + " est absent du " + date_debut + " a "+ date_fin
 	else:
