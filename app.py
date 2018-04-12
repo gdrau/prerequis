@@ -89,13 +89,13 @@ def login(base_url,api_login,api_password):
 def processRequest(req):
     if req.get("result").get("action") != "congessalarie":
         return {}
-    #authToken, cookies = login(base_url,api_login,api_password)
+    authToken, cookies = login(base_url,api_login,api_password)
     res=makeWebhookResult()
     return res   
 
 def makeWebhookResult():
     
-    speech = "coucou ca va?" + api_login + base_url
+    speech = "coucou ca va?" + authToken 
     
     print("Response:")
     print(speech)
