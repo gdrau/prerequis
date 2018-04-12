@@ -81,7 +81,9 @@ def login(base_url,api_login,api_password):
         #print("Token: " + authToken)
         return authToken, cookies
     else:
-        print("HTTP %i - %s, Message %s" % (r.status_code, r.reason, r.text))
+        a="coucou"
+        b="tat"
+        return a,b
 
 
                     
