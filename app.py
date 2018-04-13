@@ -84,7 +84,7 @@ def processRequest(req):
 
 def makeWebhookResult():
     
-    speech = "coucou ca va?" + authToken 
+    speech = "coucou ca va?" 
     
     print("Response:")
     print(speech)
