@@ -60,11 +60,17 @@ def webhook():
 #### Recuperation du token MicroStrategy ###
 def login(base_url,api_login,api_password):
     #print("Obtention token...")
+    console.log(base_url)
     data_get = { "username": "administrator",
                  "password": ""}
     r = requests.post(base_url + 'auth/login', data=data_get)
-    a="tot"
-    return a
+    authToken = r.headers['X-MSTR-AuthToken']
+    if r.ok:
+        cookies = dict(r.cookies)
+        #print("Token: " + authToken)
+        return authToken, cookies
+    else:
+        print("HTTP %i - %s, Message %s" % (r.status_code, r.reason, r.text))
 
 
                     
