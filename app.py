@@ -61,23 +61,10 @@ def webhook():
 def login(base_url,api_login,api_password):
     #print("Obtention token...")
     data_get = { "username": "administrator",
-                 "password": "",
-                 "loginMode": "1",
-                 "maxSearch": "3",
-                 "workingSet": 0,
-                 "changePassword": "false",
-                 "newPassword": "string",
-                 "metadataLocale": "en_us",
-                 "warehouseDataLocale": "en_us",
-                 "displayLocale": "en_us",
-                 "messagesLocale": "en_us",
-                 "numberLocale": "en_us",
-                 "timeZone": "UTC",
-                 "applicationType": "35" }
+                 "password": ""}
     r = requests.post(base_url + 'auth/login', data=data_get)
-    a="coucou"
-    b="tat"
-    return a,b
+    a="tot"
+    return a
 
 
                     
@@ -85,7 +72,7 @@ def login(base_url,api_login,api_password):
 def processRequest(req):
     if req.get("result").get("action") != "congessalarie":
         return {}
-    authToken, cookies = login(base_url,api_login,api_password)
+    authToken = login(base_url,api_login,api_password)
     res=makeWebhookResult()
     return res   
 
