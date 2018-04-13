@@ -58,15 +58,14 @@ def webhook():
     return r
 
 #### Recuperation du token MicroStrategy ###
-def login(base_url,api_login,api_password):
+def login():
+    base_url = "http://mon.prerequis.com:2051/MicroStrategyLibrary/api/";
     #print("Obtention token...")
-    console.log(base_url)
     data_get = { "username": "administrator",
                  "password": ""}
     #r = requests.post(base_url + 'auth/login', data=data_get)
     #authToken = r.headers['X-MSTR-AuthToken']
     toto="speech"
-    console.log("allo")
     return toto
 
                     
@@ -74,7 +73,7 @@ def login(base_url,api_login,api_password):
 def processRequest(req):
     if req.get("result").get("action") != "congessalarie":
         return {}
-    authToken = login(base_url,api_login,api_password)
+    authToken = login()
     res=makeWebhookResult()
     return res   
 
