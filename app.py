@@ -63,8 +63,8 @@ def login():
     #print("Obtention token...")
     data_get = { "username": "administrator",
                  "password": ""}
-    #r = requests.post(base_url + 'auth/login', data=data_get)
-    #authToken = r.headers['X-MSTR-AuthToken']
+    r = requests.post(base_url + 'auth/login', data=data_get)
+    authToken = r.headers['X-MSTR-AuthToken']
     toto="speech"
     return toto
 
