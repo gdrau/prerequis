@@ -68,7 +68,7 @@ def login(base_url,api_login,api_password):
     if r.ok:
         cookies = dict(r.cookies)
         #print("Token: " + authToken)
-        return authToken, cookies
+        return authToken
     else:
         print("HTTP %i - %s, Message %s" % (r.status_code, r.reason, r.text))
 
@@ -78,7 +78,7 @@ def login(base_url,api_login,api_password):
 def processRequest(req):
     if req.get("result").get("action") != "congessalarie":
         return {}
-    authToken = login(base_url,api_login,api_password)
+    #authToken = login(base_url,api_login,api_password)
     res=makeWebhookResult()
     return res   
 
