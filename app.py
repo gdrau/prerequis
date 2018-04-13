@@ -63,8 +63,8 @@ def login(base_url,api_login,api_password):
     console.log(base_url)
     data_get = { "username": "administrator",
                  "password": ""}
-    r = requests.post(base_url + 'auth/login', data=data_get)
-    authToken = r.headers['X-MSTR-AuthToken']
+    #r = requests.post(base_url + 'auth/login', data=data_get)
+    #authToken = r.headers['X-MSTR-AuthToken']
     toto="speech"
     console.log("allo")
     return toto
@@ -74,13 +74,13 @@ def login(base_url,api_login,api_password):
 def processRequest(req):
     if req.get("result").get("action") != "congessalarie":
         return {}
-    #authToken = login(base_url,api_login,api_password)
+    authToken = login(base_url,api_login,api_password)
     res=makeWebhookResult()
     return res   
 
 def makeWebhookResult():
     
-    speech = "coucou ca va?" 
+    speech = "coucou ca va?"  
     
     print("Response:")
     print(speech)
