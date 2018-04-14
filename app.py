@@ -62,11 +62,10 @@ def login():
     headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-}
+    }
 
-data = '{ \n   "username": "administrator", \n   "password": ""\n }'
-
-response = requests.post('http://mon.prerequis.com:2051/MicroStrategyLibrary/api/auth/login', headers=headers, data=data)
+    data = '{ \n   "username": "administrator", \n   "password": ""\n }'
+    response = requests.post('http://mon.prerequis.com:2051/MicroStrategyLibrary/api/auth/login', headers=headers, data=data)
 
     toto="speech"
     return toto
