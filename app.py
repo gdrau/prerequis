@@ -51,7 +51,10 @@ base_url = "http://mon.prerequis.com:2051/MicroStrategyLibrary/api/";
 @app.route('/webhook', methods=['POST'])
 def webhook():
     req = request.get_json(silent=True, force=True)
-    res = processRequest(req)
+    if req.get("result").get("action") != "congessalarie":
+        return {}
+    authToken = login()
+    res=makeWebhookResult()
     res = json.dumps(res, indent=4)
     r = make_response(res)
     r.headers['Content-Type'] = 'application/json'
