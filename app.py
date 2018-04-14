@@ -59,12 +59,15 @@ def webhook():
 
 #### Recuperation du token MicroStrategy ###
 def login():
-    base_url = "http://mon.prerequis.com:2051/MicroStrategyLibrary/api/";
-    #print("Obtention token...")
-    data_get = { "username": "administrator",
-                 "password": ""}
-    #r = requests.post(base_url + 'auth/login', data=data_get)
-    #authToken = r.headers['X-MSTR-AuthToken']
+    headers = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+}
+
+data = '{ \n   "username": "administrator", \n   "password": ""\n }'
+
+response = requests.post('http://mon.prerequis.com:2051/MicroStrategyLibrary/api/auth/login', headers=headers, data=data)
+
     toto="speech"
     return toto
 
