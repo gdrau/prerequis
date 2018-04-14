@@ -53,7 +53,17 @@ def webhook():
     req = request.get_json(silent=True, force=True)
     if req.get("result").get("action") != "congessalarie":
         return {}
-    authToken = login()
+    URL = "http://maps.googleapis.com/maps/api/geocode/json"
+ 
+    # location given here
+    location = "delhi technological university"
+ 
+    # defining a params dict for the parameters to be sent to the API
+    PARAMS = {'address':location}
+ 
+    # sending get request and saving the response as response object
+    r = requests.get(url = URL, params = PARAMS)
+    
     res=makeWebhookResult()
     res = json.dumps(res, indent=4)
     r = make_response(res)
