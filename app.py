@@ -59,14 +59,16 @@ def webhook():
 
 #### Recuperation du token MicroStrategy ###
 def login():
-    headers = {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-    }
-
-    data = '{ \n   "username": "administrator", \n   "password": ""\n }'
-    response = requests.post('http://mon.prerequis.com:2051/MicroStrategyLibrary/api/auth/login', headers=headers, data=data)
-
+    URL = "http://maps.googleapis.com/maps/api/geocode/json"
+ 
+    # location given here
+    location = "delhi technological university"
+ 
+    # defining a params dict for the parameters to be sent to the API
+    PARAMS = {'address':location}
+ 
+    # sending get request and saving the response as response object
+    r = requests.get(url = URL, params = PARAMS)
     toto="speech"
     return toto
 
