@@ -1,5 +1,5 @@
-# !/usr/bin/env python
 # -*- coding:utf8 -*-
+# !/usr/bin/env python
 # Copyright 2017 Google Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,18 +18,11 @@ from __future__ import print_function
 from future.standard_library import install_aliases
 install_aliases()
 
-
-import base64
-import json
-
-from pprint import pprint
-
-
 from urllib.parse import urlparse, urlencode
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError
 
-
+import json
 import os
 
 from flask import Flask
@@ -39,63 +32,75 @@ from flask import make_response
 # Flask app should start in global layout
 app = Flask(__name__)
 
-### Parametre MicroStrategy ###
-api_login = 'administrator'
-api_password = ''
-api_iserver = '192.168.1.96'
-project_id = 'B85DD89411E83A9413360080EF15F2B2'
-base_url = "http://mon.prerequis.com:2051/MicroStrategyLibrary/api/";
-
-
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
     req = request.get_json(silent=True, force=True)
+
+    print("Request:")
+    print(json.dumps(req, indent=4))
+
     res = processRequest(req)
+
     res = json.dumps(res, indent=4)
+    # print(res)
     r = make_response(res)
     r.headers['Content-Type'] = 'application/json'
     return r
 
-#### Recuperation du token MicroStrategy ###
-def login():
-   #print("Obtention token...")
-    data_get = { "username": "administrator",
-                 "password": "",
-                 "loginMode": "1",
-                 "maxSearch": "3",
-                 "workingSet": 0,
-                 "changePassword": "false",
-                 "newPassword": "string",
-                 "metadataLocale": "en_us",
-                 "warehouseDataLocale": "en_us",
-                 "displayLocale": "en_us",
-                 "messagesLocale": "en_us",
-                 "numberLocale": "en_us",
-                 "timeZone": "UTC",
-                 "applicationType": "35" }
-    r = requests.post(base_url + 'auth/login', data=data_get)
-    if r.ok:
-        authToken = r.headers['X-MSTR-AuthToken']
-        cookies = dict(r.cookies)
-        #print("Token: " + authToken)
-        return authToken, cookies
-    else:
-        print("HTTP %i - %s, Message %s" % (r.status_code, r.reason, r.text))
 
-                    
-                    
 def processRequest(req):
-    if req.get("result").get("action") != "congessalarie":
+    if req.get("result").get("action") != "yahooWeatherForecast":
         return {}
-    authToken = login()
-    res=makeWebhookResult()
-    return res   
+    baseurl = "https://query.yahooapis.com/v1/public/yql?"
+    yql_query = makeYqlQuery(req)
+    if yql_query is None:
+        return {}
+    yql_url = baseurl + urlencode({'q': yql_query}) + "&format=json"
+    result = urlopen(yql_url).read()
+    data = json.loads(result)
+    res = makeWebhookResult(data)
+    return res
 
-def makeWebhookResult():
-    
-    speech = "coucou ca va?"  
-    
+
+def makeYqlQuery(req):
+    result = req.get("result")
+    parameters = result.get("parameters")
+    city = parameters.get("geo-city")
+    if city is None:
+        return None
+
+    return "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='" + city + "')"
+
+
+def makeWebhookResult(data):
+    query = data.get('query')
+    if query is None:
+        return {}
+
+    result = query.get('results')
+    if result is None:
+        return {}
+
+    channel = result.get('channel')
+    if channel is None:
+        return {}
+
+    item = channel.get('item')
+    location = channel.get('location')
+    units = channel.get('units')
+    if (location is None) or (item is None) or (units is None):
+        return {}
+
+    condition = item.get('condition')
+    if condition is None:
+        return {}
+
+    # print(json.dumps(item, indent=4))
+
+    speech = "Today the weather in " + location.get('city') + ": " + condition.get('text') + \
+             ", And the temperature is " + condition.get('temp') + " " + units.get('temperature')
+
     print("Response:")
     print(speech)
 
@@ -104,7 +109,7 @@ def makeWebhookResult():
         "displayText": speech,
         # "data": data,
         # "contextOut": [],
-        "source": "apigdr-webhook"
+        "source": "apiai-weather-webhook-sample"
     }
 
 
