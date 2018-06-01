@@ -1,5 +1,5 @@
-# -*- coding:utf8 -*-
 # !/usr/bin/env python
+#-*- coding:utf8 -*-
 # Copyright 2017 Google Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import urllib2
+import requests
+import base64
+import json
+
+from pprint import pprint
 from __future__ import print_function
 from future.standard_library import install_aliases
 install_aliases()
@@ -22,7 +28,7 @@ from urllib.parse import urlparse, urlencode
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError
 
-import json
+
 import os
 
 from flask import Flask
@@ -32,6 +38,14 @@ from flask import make_response
 # Flask app should start in global layout
 app = Flask(__name__)
 
+### Parametre MicroStrategy ###
+api_login = 'administrator'
+api_password = ''
+api_iserver = '192.168.1.96'
+project_id = 'B85DD89411E83A9413360080EF15F2B2'
+
+
+
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
@@ -39,27 +53,59 @@ def webhook():
 
     print("Request:")
     print(json.dumps(req, indent=4))
-
     res = processRequest(req)
-
     res = json.dumps(res, indent=4)
     # print(res)
     r = make_response(res)
     r.headers['Content-Type'] = 'application/json'
     return r
 
+#### Recuperation du token MicroStrategy ###
+def login(base_url,api_login,api_password):
+    #print("Obtention token...")
+    data_get = { "username": "administrator",
+                 "password": "",
+                 "loginMode": "1",
+                 "maxSearch": "3",
+                 "workingSet": 0,
+                 "changePassword": "false",
+                 "newPassword": "string",
+                 "metadataLocale": "en_us",
+                 "warehouseDataLocale": "en_us",
+                 "displayLocale": "en_us",
+                 "messagesLocale": "en_us",
+                 "numberLocale": "en_us",
+                 "timeZone": "UTC",
+                 "applicationType": "35" }
+    r = requests.post(base_url + 'auth/login', data=data_get)
+    if r.ok:
+	authToken = r.headers['X-MSTR-AuthToken']
+        cookies = dict(r.cookies)
+        #print("Token: " + authToken)
+        return authToken, cookies
+    else:
+        print("HTTP %i - %s, Message %s" % (r.status_code, r.reason, r.text))
 
+def get_report(base_url, authToken, cookies, project_id):
+	base_url2=base_url + "reports/074C4FD647680AD5526DDBB9DBFFFE90/instances?offset=0&limit=1000"
+	data_rp={}
+        header_rp = {'X-MSTR-AuthToken': authToken,
+                     'Accept': 'application/json',
+		     'Content-Type': 'application/json',
+	             'X-MSTR-ProjectID': project_id}
+	r = requests.post(base_url2 , headers=header_rp, data=data_rp, cookies=cookies)
+	datast = json.loads(r.content)
+	return datast
+	
+					
+		
 def processRequest(req):
-    if req.get("result").get("action") != "yahooWeatherForecast":
+    if req.get("result").get("action") != "congessalarie":
         return {}
-    baseurl = "https://query.yahooapis.com/v1/public/yql?"
-    yql_query = makeYqlQuery(req)
-    if yql_query is None:
-        return {}
-    yql_url = baseurl + urlencode({'q': yql_query}) + "&format=json"
-    result = urlopen(yql_url).read()
-    data = json.loads(result)
-    res = makeWebhookResult(data)
+    base_url = "http://192.168.1.96:8080/MicroStrategyLibrary/api/";
+    authToken, cookies = login(base_url,api_login,api_password)
+    datastore=get_report(base_url, authToken, cookies, project_id)
+    res = makeWebhookResult(datastore)
     return res
 
 
@@ -73,35 +119,26 @@ def makeYqlQuery(req):
     return "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='" + city + "')"
 
 
-def makeWebhookResult(data):
-    query = data.get('query')
-    if query is None:
-        return {}
-
-    result = query.get('results')
-    if result is None:
-        return {}
-
-    channel = result.get('channel')
-    if channel is None:
-        return {}
-
-    item = channel.get('item')
-    location = channel.get('location')
-    units = channel.get('units')
-    if (location is None) or (item is None) or (units is None):
-        return {}
-
-    condition = item.get('condition')
-    if condition is None:
-        return {}
-
-    # print(json.dumps(item, indent=4))
-
-    speech = "Today the weather in " + location.get('city') + ": " + condition.get('text') + \
-             ", And the temperature is " + condition.get('temp') + " " + units.get('temperature')
-
-    print("Response:")
+def makeWebhookResult(datastore):
+    lo=len(datastore['result']['data']['root']['children'])		
+    for i in range(0,lo,1):
+	consultant=datastore['result']['data']['root']['children'][i]['element']['name']
+	lo2=len(datastore['result']['data']['root']['children'][i]['children'])
+	for j in range(0,lo2,1):
+		pole=datastore['result']['data']['root']['children'][i]['children'][j]['element']['name']
+		lo3=len(datastore['result']['data']['root']['children'][i]['children'][j]['children'])
+		for k in range(0,lo3,1):
+			date_debut=datastore['result']['data']['root']['children'][i]['children'][j]['children'][k]['element']['name']		
+			lo4=len(datastore['result']['data']['root']['children'][i]['children'][j]['children'][k]['children'])
+			for l in range(0,lo4,1):
+				date_fin=datastore['result']['data']['root']['children'][i]['children'][j]['children'][k]['children'][l]['element']['name']
+				print(consultant +" du pole " + pole + " est absent du " + date_debut + " a "+ date_fin)
+	if speech == '': 
+		speech = speech + consultant +" du pole " + pole + " est absent du " + date_debut + " a "+ date_fin
+	else:
+		speech = consultant +" du pole " + pole + " est absent du " + date_debut + " a "+ date_fin
+    
+	print("Response:")
     print(speech)
 
     return {
@@ -109,7 +146,7 @@ def makeWebhookResult(data):
         "displayText": speech,
         # "data": data,
         # "contextOut": [],
-        "source": "apiai-weather-webhook-sample"
+        "source": "apigdr-webhook"
     }
 
 
