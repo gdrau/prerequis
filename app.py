@@ -14,15 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+from __future__ import print_function
+from future.standard_library import install_aliases
+install_aliases()
+
+
 import urllib2
 import requests
 import base64
 import json
 
 from pprint import pprint
-from __future__ import print_function
-from future.standard_library import install_aliases
-install_aliases()
+
 
 from urllib.parse import urlparse, urlencode
 from urllib.request import urlopen, Request
