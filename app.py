@@ -82,7 +82,7 @@ def login(base_url,api_login,api_password):
                  "applicationType": "35" }
     r = requests.post(base_url + 'auth/login', data=data_get)
     if r.ok:
-    authToken = r.headers['X-MSTR-AuthToken']
+        authToken = r.headers['X-MSTR-AuthToken']
         cookies = dict(r.cookies)
         #print("Token: " + authToken)
         return authToken, cookies
