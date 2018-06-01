@@ -43,26 +43,29 @@ api_login = 'administrator'
 api_password = ''
 api_iserver = '192.168.1.96'
 project_id = 'B85DD89411E83A9413360080EF15F2B2'
-
+base_url = "http://192.168.1.96:8080/MicroStrategyLibrary/api/";
 
 
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
     req = request.get_json(silent=True, force=True)
-
-    print("Request:")
-    print(json.dumps(req, indent=4))
-    res = processRequest(req)
-    res = json.dumps(res, indent=4)
-    # print(res)
-    r = make_response(res)
-    r.headers['Content-Type'] = 'application/json'
-    return r
+    try:
+        action = req.get('queryResult').get('action')
+    except AttributeError:
+        return 'json error'
+    if action == 'congessalarie' :
+        authToken, cookies = login(base_url,api_login,api_password)
+        datastore=get_report(base_url, authToken, cookies, project_id)
+        res = makeWebhookResult(datastore)
+        return make_response(jsonify({'fulfillmentText': res}))
+    
+    
+    
 
 #### Recuperation du token MicroStrategy ###
 def login(base_url,api_login,api_password):
-    #print("Obtention token...")
+    base_url = "http://192.168.1.96:8080/MicroStrategyLibrary/api/";
     data_get = { "username": "administrator",
                  "password": "",
                  "loginMode": "1",
@@ -109,14 +112,6 @@ def processRequest(req):
     return res
 
 
-def makeYqlQuery(req):
-    result = req.get("result")
-    parameters = result.get("parameters")
-    city = parameters.get("geo-city")
-    if city is None:
-        return None
-
-    return "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='" + city + "')"
 
 
 def makeWebhookResult(datastore):
@@ -151,8 +146,4 @@ def makeWebhookResult(datastore):
 
 
 if __name__ == '__main__':
-    port = int(os.getenv('PORT', 5000))
-
-    print("Starting app on port %d" % port)
-
-    app.run(debug=False, port=port, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0')
