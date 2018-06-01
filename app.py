@@ -90,18 +90,18 @@ def login(base_url,api_login,api_password):
         print("HTTP %i - %s, Message %s" % (r.status_code, r.reason, r.text))
 
 def get_report(base_url, authToken, cookies, project_id):
-	base_url2=base_url + "reports/074C4FD647680AD5526DDBB9DBFFFE90/instances?offset=0&limit=1000"
-	data_rp={}
-        header_rp = {'X-MSTR-AuthToken': authToken,
+    base_url2=base_url + "reports/074C4FD647680AD5526DDBB9DBFFFE90/instances?offset=0&limit=1000"
+    data_rp={}
+    header_rp = {'X-MSTR-AuthToken': authToken,
                      'Accept': 'application/json',
-		     'Content-Type': 'application/json',
-	             'X-MSTR-ProjectID': project_id}
-	r = requests.post(base_url2 , headers=header_rp, data=data_rp, cookies=cookies)
-	datast = json.loads(r.content)
-	return datast
-	
-					
-		
+                     'Content-Type': 'application/json',
+                     'X-MSTR-ProjectID': project_id}
+    r = requests.post(base_url2 , headers=header_rp, data=data_rp, cookies=cookies)
+    datast = json.loads(r.content)
+    return datast
+    
+
+
 def processRequest(req):
     if req.get("result").get("action") != "congessalarie":
         return {}
@@ -117,23 +117,23 @@ def processRequest(req):
 def makeWebhookResult(datastore):
     lo=len(datastore['result']['data']['root']['children'])		
     for i in range(0,lo,1):
-	consultant=datastore['result']['data']['root']['children'][i]['element']['name']
-	lo2=len(datastore['result']['data']['root']['children'][i]['children'])
-	for j in range(0,lo2,1):
-		pole=datastore['result']['data']['root']['children'][i]['children'][j]['element']['name']
-		lo3=len(datastore['result']['data']['root']['children'][i]['children'][j]['children'])
-		for k in range(0,lo3,1):
-			date_debut=datastore['result']['data']['root']['children'][i]['children'][j]['children'][k]['element']['name']		
-			lo4=len(datastore['result']['data']['root']['children'][i]['children'][j]['children'][k]['children'])
-			for l in range(0,lo4,1):
-				date_fin=datastore['result']['data']['root']['children'][i]['children'][j]['children'][k]['children'][l]['element']['name']
-				print(consultant +" du pole " + pole + " est absent du " + date_debut + " a "+ date_fin)
-	if speech == '': 
-		speech = speech + consultant +" du pole " + pole + " est absent du " + date_debut + " a "+ date_fin
-	else:
-		speech = consultant +" du pole " + pole + " est absent du " + date_debut + " a "+ date_fin
+    consultant=datastore['result']['data']['root']['children'][i]['element']['name']
+    lo2=len(datastore['result']['data']['root']['children'][i]['children'])
+    for j in range(0,lo2,1):
+        pole=datastore['result']['data']['root']['children'][i]['children'][j]['element']['name']
+        lo3=len(datastore['result']['data']['root']['children'][i]['children'][j]['children'])
+        for k in range(0,lo3,1):
+            date_debut=datastore['result']['data']['root']['children'][i]['children'][j]['children'][k]['element']['name']		
+            lo4=len(datastore['result']['data']['root']['children'][i]['children'][j]['children'][k]['children'])
+            for l in range(0,lo4,1):
+                date_fin=datastore['result']['data']['root']['children'][i]['children'][j]['children'][k]['children'][l]['element']['name']
+                print(consultant +" du pole " + pole + " est absent du " + date_debut + " a "+ date_fin)
+    if speech == '': 
+        speech = speech + consultant +" du pole " + pole + " est absent du " + date_debut + " a "+ date_fin
+    else:
+        speech = consultant +" du pole " + pole + " est absent du " + date_debut + " a "+ date_fin
     
-	print("Response:")
+    print("Response:")
     print(speech)
 
     return {
