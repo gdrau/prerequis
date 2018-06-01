@@ -21,7 +21,7 @@ install_aliases()
 
 
 
-import requests
+
 import base64
 import json
 
