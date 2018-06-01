@@ -117,17 +117,17 @@ def processRequest(req):
 def makeWebhookResult(datastore):
     lo=len(datastore['result']['data']['root']['children'])		
     for i in range(0,lo,1):
-    consultant=datastore['result']['data']['root']['children'][i]['element']['name']
-    lo2=len(datastore['result']['data']['root']['children'][i]['children'])
-    for j in range(0,lo2,1):
-        pole=datastore['result']['data']['root']['children'][i]['children'][j]['element']['name']
-        lo3=len(datastore['result']['data']['root']['children'][i]['children'][j]['children'])
-        for k in range(0,lo3,1):
-            date_debut=datastore['result']['data']['root']['children'][i]['children'][j]['children'][k]['element']['name']		
-            lo4=len(datastore['result']['data']['root']['children'][i]['children'][j]['children'][k]['children'])
-            for l in range(0,lo4,1):
-                date_fin=datastore['result']['data']['root']['children'][i]['children'][j]['children'][k]['children'][l]['element']['name']
-                print(consultant +" du pole " + pole + " est absent du " + date_debut + " a "+ date_fin)
+        consultant=datastore['result']['data']['root']['children'][i]['element']['name']
+        lo2=len(datastore['result']['data']['root']['children'][i]['children'])
+        for j in range(0,lo2,1):
+            pole=datastore['result']['data']['root']['children'][i]['children'][j]['element']['name']
+            lo3=len(datastore['result']['data']['root']['children'][i]['children'][j]['children'])
+            for k in range(0,lo3,1):
+                date_debut=datastore['result']['data']['root']['children'][i]['children'][j]['children'][k]['element']['name']		
+                lo4=len(datastore['result']['data']['root']['children'][i]['children'][j]['children'][k]['children'])
+                for l in range(0,lo4,1):
+                    date_fin=datastore['result']['data']['root']['children'][i]['children'][j]['children'][k]['children'][l]['element']['name']
+                    print(consultant +" du pole " + pole + " est absent du " + date_debut + " a "+ date_fin)
     if speech == '': 
         speech = speech + consultant +" du pole " + pole + " est absent du " + date_debut + " a "+ date_fin
     else:
