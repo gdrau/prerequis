@@ -47,7 +47,7 @@ api_login = 'administrator'
 api_password = ''
 api_iserver = '192.168.1.96'
 project_id = 'B85DD89411E83A9413360080EF15F2B2'
-base_url = "http://192.168.1.96:8080/MicroStrategyLibrary/api/";
+base_url = "http://mon.prerequis.com:2051/MicroStrategyLibrary/api/";
 
 
 
@@ -69,7 +69,7 @@ def webhook():
 
 #### Recuperation du token MicroStrategy ###
 def login(base_url,api_login,api_password):
-    base_url = "http://192.168.1.96:8080/MicroStrategyLibrary/api/";
+    base_url = "http://mon.prerequis.com:2051/MicroStrategyLibrary/api/";
     data_get = { "username": "administrator",
                  "password": "",
                  "loginMode": "1",
@@ -104,20 +104,6 @@ def get_report(base_url, authToken, cookies, project_id):
     datast = json.loads(r.content)
     return datast
     
-
-
-def processRequest(req):
-    if req.get("result").get("action") != "congessalarie":
-        return {}
-    base_url = "http://192.168.1.96:8080/MicroStrategyLibrary/api/";
-    authToken, cookies = login(base_url,api_login,api_password)
-    datastore=get_report(base_url, authToken, cookies, project_id)
-    res = makeWebhookResult(datastore)
-    return res
-
-
-
-
 def makeWebhookResult(datastore):
     lo=len(datastore['result']['data']['root']['children'])		
     for i in range(0,lo,1):
